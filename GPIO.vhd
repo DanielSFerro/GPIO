@@ -37,53 +37,52 @@ begin
 
 	--Definicao da logica dos registradores
 
- process(clk,Data_In,W,Reg_Add,R,registers,reset,PIN)
+process(clk,Data_In,W,Reg_Add,R,registers,reset,PIN)
 
      begin
 	  
-			if (reset = '1') then
-				registers(0) <= (others => '0'); -- Dir recebe tudo como entrada
-				registers(2) <= (others => '0'); -- Output_VAL => 0
+	if (reset = '1') then
+		registers(0) <= (others => '0'); -- Dir recebe tudo como entrada
+		registers(2) <= (others => '0'); -- Output_VAL => 0
 			
-
-		   elsif rising_edge(clk) then 
-            if(W = '1') then
+	elsif rising_edge(clk) then 
+		if(W = '1') then
+		    if (Reg_Add = 1) then --Garantir que nao faca escrita no registrador INPUT_VAL
+		    else
+			registers(Reg_Add) <= Data_In;
+		    end if;
+           	end if;	
+			
+		registers (1) <= PIN;
+			    
+	end if;
+			
+		
+	if(R = '1') then
+		Data_Out <= registers(Reg_Add);
+	else
+		Data_Out <= (others => '0');
+	end if;
+			
 				
-					if (Reg_Add = 1) then --Garantir que nao faca escrita no registrador INPUT_VAL
-					else
-						registers(Reg_Add) <= Data_In;
-					end if;
-            end if;				
-			end if;
-			
-			
-			if(R = '1') then
-				Data_Out <= registers(Reg_Add);
-			else
-				Data_Out <= (others => '0');
-			end if;
-			
-			registers (1) <= PIN;
-			
-				
-		end process;
+end process;
 		
 		--Definicao da Entrada e Saida do PIN
 		
-	process(PIN, registers)
+process(PIN, registers)
 	
-		begin
+	begin
 		
-		for i in (n-1) downto 0 LOOP
-			if (registers(0)(i) = '0') then -- Entrada
-				PIN(i) <= 'Z';
+	for i in (n-1) downto 0 LOOP
+		if (registers(0)(i) = '0') then -- Entrada
+			PIN(i) <= 'Z';
 				
-			else  --Saida
-				PIN(i) <= registers(2)(i);  --Recebe output_val 
-			end if;
-		end loop;
+		else  --Saida
+			PIN(i) <= registers(2)(i);  --Recebe output_val 
+		end if;
+	end loop;
 			
-	end process;
+end process;
 	
 
 	
