@@ -4,23 +4,23 @@ use ieee.numeric_std.all;
 
 ENTITY GPIO IS
 	GENERIC (
-	n: INTEGER :=4; -- Numero de bits dos registradores
-	k: INTEGER :=3 -- Numero de registradores   0=DIR  1=INPUT_VAL 2=OUTPUT_VAL
+	n: INTEGER :=4; -- Number of bits of the registers
+	k: INTEGER :=3 -- Number of registers   0=DIR  1=INPUT_VAL 2=OUTPUT_VAL
 	);
 	PORT (
-			-- Porta de Writing
+			-- Writing Pins
 			Data_In: in std_logic_vector (n-1 downto 0);
 			W: in std_logic;
 			
-			-- Porta de Reading
+			-- Reading Pins
 			Data_Out: out std_logic_vector (n-1 downto 0);
 			R: in std_logic;
 			
-			--Enrecamento
+			--Adress
 			
 			Reg_Add: integer range 0 to k-1;
 			
-			-- Outras variaveis
+			-- Others Pins
 			clk: in std_logic;
 			reset: in std_logic;
 			PIN : inout std_logic_vector (n-1 downto 0)
@@ -35,19 +35,19 @@ ARCHITECTURE logica of GPIO is
 	
 begin
 
-	--Definicao da logica dos registradores
+	--Logic of the registers
 
 process(clk,Data_In,W,Reg_Add,R,registers,reset,PIN)
 
      begin
 	  
 	if (reset = '1') then
-		registers(0) <= (others => '0'); -- Dir recebe tudo como entrada
+		registers(0) <= (others => '0'); -- DIR get everything as input
 		registers(2) <= (others => '0'); -- Output_VAL => 0
 			
 	elsif rising_edge(clk) then 
 		if(W = '1') then
-		    if (Reg_Add = 1) then --Garantir que nao faca escrita no registrador INPUT_VAL
+		    if (Reg_Add = 1) then --Making sure that does not write in register INPUT_VAL
 		    else
 			registers(Reg_Add) <= Data_In;
 		    end if;
@@ -67,18 +67,18 @@ process(clk,Data_In,W,Reg_Add,R,registers,reset,PIN)
 				
 end process;
 		
-		--Definicao da Entrada e Saida do PIN
+		--Behavior of PIN
 		
 process(PIN, registers)
 	
 	begin
 		
 	for i in (n-1) downto 0 LOOP
-		if (registers(0)(i) = '0') then -- Entrada
+		if (registers(0)(i) = '0') then -- If is input
 			PIN(i) <= 'Z';
 				
-		else  --Saida
-			PIN(i) <= registers(2)(i);  --Recebe output_val 
+		else  --If is output
+			PIN(i) <= registers(2)(i);  --Get OUTPUT_VALUE 
 		end if;
 	end loop;
 			
