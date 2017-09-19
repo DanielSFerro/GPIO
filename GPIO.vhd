@@ -28,7 +28,7 @@ ENTITY GPIO IS
 		);
 END GPIO;
 
-ARCHITECTURE logica of GPIO is
+ARCHITECTURE behavior of GPIO is
 
 	type registerFile is array(0 to k-1) of std_logic_vector(n-1 downto 0);
 	signal registers : registerFile;
@@ -86,4 +86,4 @@ end process;
 	
 
 	
-end logica;
+end behavior;
